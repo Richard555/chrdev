@@ -77,6 +77,8 @@ size_t lbuf, loff_t *ppos)
 {
 	int maxbytes, bytes_to_read, nbytes;
 
+	printk(KERN_ALERT "Read. user addr=0x%p\n", buf);
+
 	maxbytes = MAX_LENGTH - *ppos;
 
 	if (maxbytes > lbuf)
@@ -101,6 +103,8 @@ static int device_write(struct file *file, const char *buf,
 size_t lbuf, loff_t *ppos)
 {
 	int maxbytes, bytes_to_write, nbytes;
+	
+	printk(KERN_ALERT "Write.user addr=0x%p\n", buf);
 
 	maxbytes = MAX_LENGTH - *ppos;
 

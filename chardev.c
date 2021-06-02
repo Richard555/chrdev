@@ -19,9 +19,9 @@ module_exit(exit_device);
 
 static int device_open(struct inode *, struct file *);
 static int device_release(struct inode *, struct file *);
-static int device_read(struct file *, char *,
+static ssize_t device_read(struct file *, char *,
 size_t, loff_t *);
-static int device_write(struct file *, const char *,
+static ssize_t device_write(struct file *, const char *,
 size_t, loff_t *);
 static loff_t device_lseek(struct file *, loff_t, int);
 
@@ -72,12 +72,12 @@ static int device_release(struct inode *inode, struct file *file)
 	return 0;
 }
 
-static int device_read(struct file *file, char __user *buf,
+static ssize_t device_read(struct file *file, char __user *buf,
 size_t lbuf, loff_t *ppos)
 {
 	int maxbytes, bytes_to_read, nbytes;
 
-	printk(KERN_ALERT "Read. user addr=0x%p\n", buf);
+	printk(KERN_ALERT "device_read: user mode addr=0x%p size=%ld offset=%lld\n", buf, lbuf, *ppos);
 
 	maxbytes = MAX_LENGTH - *ppos;
 
@@ -99,12 +99,12 @@ size_t lbuf, loff_t *ppos)
 	return nbytes;
 }
 
-static int device_write(struct file *file, const char *buf,
+static ssize_t device_write(struct file *file, const char *buf,
 size_t lbuf, loff_t *ppos)
 {
 	int maxbytes, bytes_to_write, nbytes;
 	
-	printk(KERN_ALERT "Write.user addr=0x%p\n", buf);
+	printk(KERN_ALERT "device_write user mode addr=0x%p size=%ld offset=%lld\n", buf, lbuf, *ppos);
 
 	maxbytes = MAX_LENGTH - *ppos;
 
@@ -131,6 +131,8 @@ int whence)
 {
 	loff_t new_pos = 0;
 
+	printk(KERN_ALERT "device_lseek: file=0x%p offset=%lld whence=%d\n", file, offset, whence);
+
 	switch(whence)
 	{
 	case SEEK_SET:
@@ -144,10 +146,10 @@ int whence)
 	break;
 	}
 
-if (new_pos > MAX_LENGTH)
-	new_pos = MAX_LENGTH;
-if (new_pos < 0)
-	new_pos = 0;
+	if (new_pos > MAX_LENGTH)
+		new_pos = MAX_LENGTH;
+	if (new_pos < 0)
+		new_pos = 0;
 
 	file->f_pos = new_pos;
 return new_pos;

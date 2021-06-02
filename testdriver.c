@@ -10,7 +10,7 @@ int main()
 {
 	int fd, i;
 	ssize_t ret;
-	char my_buf[60];
+	char my_buf[61]={0};
 
 	for (i = 0; i < 60; i++) my_buf[i] = '*';
 
@@ -38,7 +38,7 @@ int main()
 
 	memset(my_buf, 0, sizeof(my_buf));
 
-	write(fd, "This is just testing", 15);
+	write(fd, "123456789ABCDEF", 12);
 
 	lseek(fd, 0, SEEK_SET);
 
